@@ -1,0 +1,2 @@
+https://tokens-economy.gitbook.io/consensus/chain-based-trusted-computing-algorithms/poet
+https://blog.iota.org/integrate-hyperledger-fabric-with-the-iota-tangle-9bc3ac873e82/
