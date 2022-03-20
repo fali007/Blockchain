@@ -1,0 +1,10 @@
+{
+	"name":"sales blockchain",
+	"endpoints":[
+		{
+			"name":"home",
+			"url":"http://localhost:8080/index",
+			"comment":"hello world"
+		}
+	]
+}
