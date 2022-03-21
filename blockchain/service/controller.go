@@ -59,3 +59,10 @@ func CloseTransaction(w http.ResponseWriter, r *http.Request){
 		w.Write(GetJsonEncoding(types.TxResponse{http.StatusBadRequest}))
 	}
 }
+
+func GetBalances(w http.ResponseWriter, r *http.Request){
+	state:=LoadState()
+	w.WriteHeader(http.StatusOK)
+	w.Header().Set("Content-Type", "application/json")
+	w.Write(GetJsonEncoding(state.Balances))
+}

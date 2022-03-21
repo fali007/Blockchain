@@ -23,6 +23,10 @@ func Close(w http.ResponseWriter, r *http.Request){
 	service.CloseTransaction(w,r)
 }
 
+func Balance(w http.ResponseWriter, r *http.Request){
+	service.GetBalances(w,r)
+}
+
 func main(){
 	if f:=service.StartChannel(); f==true{
 		fmt.Println("State loaded and Server started")
@@ -32,5 +36,6 @@ func main(){
 	r.HandleFunc("/genesis",Genesis).Methods("GET")
 	r.HandleFunc("/transaction",Transaction).Methods("GET")
 	r.HandleFunc("/close",Close).Methods("GET")
+	r.HandleFunc("/balance",Balance).Methods("GET")
 	http.ListenAndServe(":8080",r)
 }

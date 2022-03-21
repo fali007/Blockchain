@@ -3,6 +3,7 @@ package service
 import (
 	"os"
 	"fmt"
+	"time"
 	"bufio"
 	"strconv"
 	"io/ioutil"
@@ -26,8 +27,14 @@ func writeToDb(s []byte)bool{
 
 func validateTransation(doc types.Tx){
 	state:=LoadState()
+
+	if doc.Data=="t"{
+		writeToDb(GetJsonEncoding(types.TxDoc{doc,10000,GetSignature(doc),state.LastHash}))
+		return
+	}
+	
 	if state.Balances[doc.From]>=doc.Value{
-		writeToDb(GetJsonEncoding(doc))
+		writeToDb(GetJsonEncoding(types.TxDoc{doc,10000,GetSignature(doc),state.LastHash}))
 	}else{
 		fmt.Println("Invalid or Insufficient Transaction")
 	}
@@ -39,7 +46,7 @@ func Transaction(f,t,d,v string)bool{
 	if err!=nil{
 		fmt.Println("Value Not a number :",err)
 	}
-	log:=types.Tx{types.Account(f),types.Account(t),uint(value),d}
+	log:=types.Tx{types.Account(f),types.Account(t),uint(value),d,time.Now()}
 	*c <- log
 	if err!=nil{
 		return false
@@ -57,7 +64,7 @@ func getGenesis()*types.Genesis{
 	return &genesis
 }
 
-func getDb(b *map[types.Account]uint)*[]types.Tx{
+func getDb(b *map[types.Account]uint, h *[]byte)*[]types.Tx{
 	tx_document,err:=os.Open("db.json")
 	defer tx_document.Close()
 	
@@ -66,15 +73,22 @@ func getDb(b *map[types.Account]uint)*[]types.Tx{
 	}
 
 	var tx []types.Tx
+	var hash []byte
 
 	scanner := bufio.NewScanner(tx_document)
 	for scanner.Scan(){
-		var temp types.Tx
+		var temp types.TxDoc
 		json.Unmarshal(scanner.Bytes(),&temp)
-		(*b)[temp.From]-=temp.Value
-		(*b)[temp.To]+=temp.Value
-        tx=append(tx,temp)
+		if temp.Transaction.Data=="f"{
+			(*b)[temp.Transaction.From]-=temp.Transaction.Value
+			(*b)[temp.Transaction.To]+=temp.Transaction.Value
+		}else{
+			(*b)[temp.Transaction.To]+=temp.Transaction.Value
+		}
+		hash=temp.Signature
+        tx=append(tx,temp.Transaction)
     }
+    *h=hash
     return &tx
 }
 
@@ -87,6 +101,6 @@ func LoadState()*types.State{
 	for k,v:=range genesis.Balances{
 		state.Balances[k]=v
 	}
-	state.TxMemPool=*getDb(&state.Balances)
+	state.TxMemPool=*getDb(&state.Balances, &state.LastHash)
 	return &state
 }

@@ -11,6 +11,14 @@ type Tx struct{
 	To         		Account     		`json:"to"`
 	Value      		uint        		`json:"value"`
 	Data       		string      		`json:"data"`
+	Time 			time.Time 			`json:"time"`
+}
+
+type TxDoc struct{
+	Transaction 	Tx 					`json:"transaction"`
+	Nonce			uint 				`json:"nonce"`
+	Signature 		[]byte				`json:"signature"`
+	Previous 		[]byte 				`json:"previous"`
 }
 
 type Genesis struct{
@@ -22,4 +30,5 @@ type Genesis struct{
 type State struct{
 	TxMemPool       []Tx
 	Balances        map[Account]uint
+	LastHash		[]byte
 }
