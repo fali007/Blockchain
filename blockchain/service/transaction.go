@@ -64,7 +64,7 @@ func getGenesis()*types.Genesis{
 	return &genesis
 }
 
-func getDb(b *map[types.Account]uint, h *[]byte)*[]types.Tx{
+func getDb(b *map[types.Account]uint, h *[]byte)*[]types.TxDoc{
 	tx_document,err:=os.Open("db.json")
 	defer tx_document.Close()
 	
@@ -72,7 +72,7 @@ func getDb(b *map[types.Account]uint, h *[]byte)*[]types.Tx{
 		fmt.Println("Error opening info file", err)
 	}
 
-	var tx []types.Tx
+	var tx []types.TxDoc
 	var hash []byte
 
 	scanner := bufio.NewScanner(tx_document)
@@ -86,10 +86,44 @@ func getDb(b *map[types.Account]uint, h *[]byte)*[]types.Tx{
 			(*b)[temp.Transaction.To]+=temp.Transaction.Value
 		}
 		hash=temp.Signature
-        tx=append(tx,temp.Transaction)
+        tx=append(tx,temp)
     }
     *h=hash
     return &tx
+}
+
+func isEqual(a,b []byte)bool{
+	if len(a) != len(b) {
+        return false
+    }
+    for i := range a {
+        if a[i] != b[i] {
+            return false
+        }
+    }
+    return true
+}
+
+func ValidateState()bool{
+	state:=LoadState()
+	root:=true
+	var previous []byte=nil
+	for _,v:=range state.TxMemPool{
+		if root{
+			if !isEqual(v.Signature,GetSignature(v.Transaction)){
+				fmt.Println("error")
+				return false
+			}
+		}else{
+			if !isEqual(v.Signature,GetSignature(v.Transaction))||!isEqual(v.Previous,previous){
+				fmt.Println("error")
+				return false
+			}
+		}
+		previous=v.Signature
+		root=false
+	}
+	return true
 }
 
 func LoadState()*types.State{

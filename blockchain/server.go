@@ -28,14 +28,16 @@ func Balance(w http.ResponseWriter, r *http.Request){
 }
 
 func main(){
-	if f:=service.StartChannel(); f==true{
+	if service.StartChannel() && service.ValidateState(){
 		fmt.Println("State loaded and Server started")
+		r:=mux.NewRouter()
+		r.HandleFunc("/index",Index).Methods("GET")
+		r.HandleFunc("/genesis",Genesis).Methods("GET")
+		r.HandleFunc("/transaction",Transaction).Methods("GET")
+		r.HandleFunc("/close",Close).Methods("GET")
+		r.HandleFunc("/balance",Balance).Methods("GET")
+		http.ListenAndServe(":8080",r)
+	}else{
+		fmt.Println("Invalid transaction..Quiting")
 	}
-	r:=mux.NewRouter()
-	r.HandleFunc("/index",Index).Methods("GET")
-	r.HandleFunc("/genesis",Genesis).Methods("GET")
-	r.HandleFunc("/transaction",Transaction).Methods("GET")
-	r.HandleFunc("/close",Close).Methods("GET")
-	r.HandleFunc("/balance",Balance).Methods("GET")
-	http.ListenAndServe(":8080",r)
 }

@@ -28,7 +28,7 @@ type Genesis struct{
 }
 
 type State struct{
-	TxMemPool       []Tx
+	TxMemPool       []TxDoc
 	Balances        map[Account]uint
 	LastHash		[]byte
 }
