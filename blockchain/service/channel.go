@@ -23,7 +23,7 @@ func StartChannel()bool{
 
 func Process(c *chan types.Tx){
 	for doc:=range *c{
-		// go validateTransation(doc) -- running multi threaded gives an error - previous hash will be mismatch
+		// go validateTransation(doc) -- running multi threaded gives an error - previous hash will be mismatch -- will have to rehash if this happens
 		validateTransation(doc)
 	}
 }
