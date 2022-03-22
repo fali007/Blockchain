@@ -117,6 +117,9 @@ func ValidateState()bool{
 	root:=true
 	var previous []byte=nil
 	for _,v:=range state.TxMemPool{
+		if !checkValid(v.Signature){
+			return false
+		}
 		if root{
 			if !isEqual(v.Signature,GetSignature(v.Document)){
 				fmt.Println("error", v, "root")
