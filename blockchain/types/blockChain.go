@@ -15,10 +15,14 @@ type Tx struct{
 }
 
 type TxDoc struct{
-	Transaction 	Tx 					`json:"transaction"`
-	Nonce			uint 				`json:"nonce"`
-	Signature 		[]byte				`json:"signature"`
+	Nonce			int64 				`json:"nonce"`
 	Previous 		[]byte 				`json:"previous"`
+	Transaction 	Tx 					`json:"transaction"`
+}
+
+type HashObj struct{
+	Signature		[]byte				`json:"sign"`
+	Document 		TxDoc				`json:"doc"`
 }
 
 type Genesis struct{
@@ -28,7 +32,7 @@ type Genesis struct{
 }
 
 type State struct{
-	TxMemPool       []TxDoc
+	TxMemPool       []HashObj
 	Balances        map[Account]uint
 	LastHash		[]byte
 }

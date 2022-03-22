@@ -27,14 +27,22 @@ func writeToDb(s []byte)bool{
 
 func validateTransation(doc types.Tx){
 	state:=LoadState()
+	var nonce int64=1
 
 	if doc.Data=="t"{
-		writeToDb(GetJsonEncoding(types.TxDoc{doc,10000,GetSignature(doc),state.LastHash}))
+		document:=types.TxDoc{nonce,state.LastHash,doc}
+		hashObj:=types.HashObj{GetSignature(document),document}
+		adress:=GetValidSignatureBlock(&hashObj)
+		writeToDb(GetJsonEncoding(*adress))
 		return
 	}
 	
 	if state.Balances[doc.From]>=doc.Value{
-		writeToDb(GetJsonEncoding(types.TxDoc{doc,10000,GetSignature(doc),state.LastHash}))
+		document:=types.TxDoc{nonce,state.LastHash,doc}
+		hashObj:=types.HashObj{GetSignature(document),document}
+		adress:=GetValidSignatureBlock(&hashObj)
+		writeToDb(GetJsonEncoding(*adress))
+		return
 	}else{
 		fmt.Println("Invalid or Insufficient Transaction")
 	}
@@ -64,7 +72,7 @@ func getGenesis()*types.Genesis{
 	return &genesis
 }
 
-func getDb(b *map[types.Account]uint, h *[]byte)*[]types.TxDoc{
+func getDb(b *map[types.Account]uint, h *[]byte)*[]types.HashObj{
 	tx_document,err:=os.Open("db.json")
 	defer tx_document.Close()
 	
@@ -72,18 +80,18 @@ func getDb(b *map[types.Account]uint, h *[]byte)*[]types.TxDoc{
 		fmt.Println("Error opening info file", err)
 	}
 
-	var tx []types.TxDoc
+	var tx []types.HashObj
 	var hash []byte
 
 	scanner := bufio.NewScanner(tx_document)
 	for scanner.Scan(){
-		var temp types.TxDoc
+		var temp types.HashObj
 		json.Unmarshal(scanner.Bytes(),&temp)
-		if temp.Transaction.Data=="f"{
-			(*b)[temp.Transaction.From]-=temp.Transaction.Value
-			(*b)[temp.Transaction.To]+=temp.Transaction.Value
+		if temp.Document.Transaction.Data=="f"{
+			(*b)[temp.Document.Transaction.From]-=temp.Document.Transaction.Value
+			(*b)[temp.Document.Transaction.To]+=temp.Document.Transaction.Value
 		}else{
-			(*b)[temp.Transaction.To]+=temp.Transaction.Value
+			(*b)[temp.Document.Transaction.To]+=temp.Document.Transaction.Value
 		}
 		hash=temp.Signature
         tx=append(tx,temp)
@@ -110,12 +118,12 @@ func ValidateState()bool{
 	var previous []byte=nil
 	for _,v:=range state.TxMemPool{
 		if root{
-			if isEqual(v.Signature,GetSignature(v.Transaction)){
+			if isEqual(v.Signature,GetSignature(v.Document)){
 				fmt.Println("error", v, "root")
 				return false
 			}
 		}else{
-			if isEqual(v.Signature,GetSignature(v.Transaction))||isEqual(v.Previous,previous){
+			if isEqual(v.Signature,GetSignature(v.Document))||isEqual(v.Document.Previous,previous){
 				fmt.Println("error", v)
 				return false
 			}
