@@ -5,6 +5,28 @@
 			"name":"home",
 			"url":"http://localhost:8080/index",
 			"comment":"hello world"
+		},
+		{
+			"name":"genesis",
+			"url":"http://localhost:8080/genesis",
+			"comment":"Genesis Ledger"
+		},
+		{
+			"name":"transaction",
+			"url":"http://localhost:8080/transaction",
+			"params":["from","to","value","data"],
+			"example":"http://localhost:8080/transaction?from=felix&to=hari&value=100&data=f",
+			"comment":"Data is either f or t. t is when its a reward.**New coins are generated"
+		},
+		{
+			"name":"close",
+			"url":"http://localhost:8080/close",
+			"comment":"Close Channels"
+		},
+		{
+			"name":"balance",
+			"url":"http://localhost:8080/balance",
+			"comment":"Get Present Balance for users"
 		}
 	]
 }

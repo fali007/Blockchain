@@ -9,15 +9,6 @@ import(
 	"blockchain/types"
 )
 
-// func GetSignature(i interface{})[]byte{
-// 	txJson,err:=json.Marshal(i)
-// 	if err!=nil{
-// 		fmt.Println("Error marshalling object", err)
-// 	}
-// 	h:=sha256.New()
-// 	return h.Sum(txJson)
-// }
-
 func addBuffer(j []byte, l int)[]byte{
 	diff:=l-len(j)
 	buf:=make([]byte,diff)
