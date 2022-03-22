@@ -112,6 +112,29 @@ func isEqual(a,b []byte)bool{
     return true
 }
 
+func ValidateStateWithResponse()[]byte{
+	state:=LoadState()
+	root:=true
+	var previous []byte=nil
+	for _,v:=range state.TxMemPool{
+		if !checkValid(v.Signature){
+			return GetJsonEncoding(types.ValidateResponse{"failed",string(GetJsonEncoding(v))})
+		}
+		if root{
+			if !isEqual(v.Signature,GetSignature(v.Document)){
+				return GetJsonEncoding(types.ValidateResponse{"failed",string(GetJsonEncoding(v))})
+			}
+		}else{
+			if !isEqual(v.Signature,GetSignature(v.Document))||!isEqual(v.Document.Previous,previous){
+				return GetJsonEncoding(types.ValidateResponse{"failed",string(GetJsonEncoding(v))})
+			}
+		}
+		previous=v.Signature
+		root=false
+	}
+	return GetJsonEncoding(types.ValidateResponse{"success","nil"})
+}
+
 func ValidateState()bool{
 	state:=LoadState()
 	root:=true
@@ -122,12 +145,10 @@ func ValidateState()bool{
 		}
 		if root{
 			if !isEqual(v.Signature,GetSignature(v.Document)){
-				fmt.Println("error", v, "root")
 				return false
 			}
 		}else{
 			if !isEqual(v.Signature,GetSignature(v.Document))||!isEqual(v.Document.Previous,previous){
-				fmt.Println("error", v)
 				return false
 			}
 		}

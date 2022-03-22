@@ -27,6 +27,11 @@
 			"name":"balance",
 			"url":"http://localhost:8080/balance",
 			"comment":"Get Present Balance for users"
+		},
+		{
+			"name":"verify",
+			"url":"http://localhost:8080/verify",
+			"comment":"Verify all the blocks, returns error block"
 		}
 	]
 }

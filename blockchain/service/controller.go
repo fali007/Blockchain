@@ -66,3 +66,10 @@ func GetBalances(w http.ResponseWriter, r *http.Request){
 	w.Header().Set("Content-Type", "application/json")
 	w.Write(GetJsonEncoding(state.Balances))
 }
+
+func Verify(w http.ResponseWriter, r *http.Request){
+	resp:=ValidateStateWithResponse()
+	w.WriteHeader(http.StatusOK)
+	w.Header().Set("Content-Type", "application/json")
+	w.Write(resp)
+}

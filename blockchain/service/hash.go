@@ -23,7 +23,7 @@ func GetValidSignatureBlock(h *types.HashObj)*types.HashObj{
 		s:=GetSignature((*h).Document)
 		if checkValid(s){
 			(*h).Signature=s
-			fmt.Println("found")
+			fmt.Printf("found nonce - %d\n",i)
 			break
 		}
 		i++

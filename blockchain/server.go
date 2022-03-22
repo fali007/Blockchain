@@ -27,6 +27,10 @@ func Balance(w http.ResponseWriter, r *http.Request){
 	service.GetBalances(w,r)
 }
 
+func Verify(w http.ResponseWriter, r *http.Request){
+	service.Verify(w,r)
+}
+
 func main(){
 	if service.StartChannel() && service.ValidateState(){
 		fmt.Println("State loaded and Server started")
@@ -36,6 +40,7 @@ func main(){
 		r.HandleFunc("/transaction",Transaction).Methods("GET")
 		r.HandleFunc("/close",Close).Methods("GET")
 		r.HandleFunc("/balance",Balance).Methods("GET")
+		r.HandleFunc("/verify",Verify).Methods("GET")
 		http.ListenAndServe(":8080",r)
 	}else{
 		fmt.Println("Invalid transaction..Quiting")

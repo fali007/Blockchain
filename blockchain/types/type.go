@@ -14,3 +14,8 @@ type Endpoint struct{
 type TxResponse struct{
 	Status 		   int  		 `json:"status"`
 }
+
+type ValidateResponse struct{
+	Status 		   string		 `json:"status"`
+	Error 		   string		 `json:"error"`
+}
