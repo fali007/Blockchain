@@ -49,13 +49,12 @@ func validateTransation(doc types.Tx){
 }
 
 func Transaction(f,t,d,v string)bool{
-	c:=GetChannel()
 	value,err:=strconv.ParseUint(v,10,64)
 	if err!=nil{
 		fmt.Println("Value Not a number :",err)
 	}
 	log:=types.Tx{types.Account(f),types.Account(t),uint(value),d,time.Now()}
-	*c <- log
+	go PushToChannel(log)
 	if err!=nil{
 		return false
 	}
