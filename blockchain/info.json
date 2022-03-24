@@ -33,5 +33,11 @@
 			"url":"http://localhost:8080/verify",
 			"comment":"Verify all the blocks, returns error block"
 		}
+		,
+		{
+			"name":"docker",
+			"command-build":"docker build -t blockchain-v1 .",
+			"command-run":"docker run -it --rm -p 0.0.0.0:8080:8080 --expose=80 blockchain-v1"
+		}
 	]
 }
