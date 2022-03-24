@@ -6,9 +6,9 @@ import (
 
 var transactionChan = make(chan types.Tx)
 
-// func GetChannel()*chan types.Tx{
-// 	return &transactionChan
-// }
+func GetChannel()*chan types.Tx{
+	return &transactionChan
+}
 
 func CloseChannel()bool{
 	close(*GetChannel())
